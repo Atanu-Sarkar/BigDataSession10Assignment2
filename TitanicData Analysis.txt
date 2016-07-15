@@ -1,0 +1,27 @@
+1.In this problem statement we will find the average fare of each class.
+========================================================================= 
+titanic_Data = LOAD 'TitanicData.txt' USING PigStorage(',') AS (PassengerId:int,Survived:int,Pclass:int,Name:chararray,sex:chararray,Age:int,SibSp:int,Parch:int,Ticket:chararray,Fare:double,Cabin:chararray,Embarked:chararray);
+group_titanic_data  = group titanic_Data by Pclass;
+avgfare_titanic_data = foreach group_titanic_data generate group, avg(titanic_Data.Fare);
+dump avgfare_titanic_data
+ 
+=========================================================================================
+2.In this problem statement we will find the number of people alive in each class and
+are embarked in Southampton.
+========================================================================================= 
+titanic_Data = LOAD 'TitanicData.txt' USING PigStorage(',') AS (PassengerId:int,Survived:int,Pclass:int,Name:chararray,sex:chararray,Age:int,SibSp:int,Parch:int,Ticket:chararray,Fare:double,Cabin:chararray,Embarked:chararray);
+filter_titanic_Data = filter titanic_Data by  Survived==0 and Embarked=='S';
+group_titanic_Data  = gruop filter_titanic_Data by Pclass;
+count_titanic_data = foreach group_titanic_Data generate group, count(titanic_Data);
+ 
+===========================================================================================
+3.In this problem statement we will find out number of male and female people died in
+each class.
+==========================================================================================
+titanic_Data = LOAD 'TitanicData.txt' USING PigStorage(',') AS (PassengerId:int,Survived:int,Pclass:int,Name:chararray,sex:chararray,Age:int,SibSp:int,Parch:int,Ticket:chararray,Fare:double,Cabin:chararray,Embarked:chararray)
+filter_titanic_Data = filter titanic_Data by Survived==1;
+group_titanic_Data  = group filter_titanic_Data by (Pclass) ;
+split group_titanic_Data into male_titanic_Data if sex =='male', female_titanic_Data if sex =='female';
+count_male_titanic_data = foreach male_titanic_Data generate group as class, count(filter_titanic_Data) as CntMale;
+count_female_titanic_data = foreach male_titanic_Data generate group as class, count(filter_titanic_Data) as CntFeMale;
+ 
